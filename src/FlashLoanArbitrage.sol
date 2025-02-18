@@ -75,4 +75,46 @@ contract FlashLoanArbitrage is IFlashLoanReceiver, Ownable {
 
         return true;
     }
+
+    function swapOnUniswapp(
+        address tokenIn,
+        uint256 amountIn
+    ) internal returns (uint256) {
+        address;
+        path[0] = tokenIn;
+        path[1] = weth;
+
+        IERC20(tokenIn).approve(address(uniswapRouter), amountIn);
+
+        uint256[] memory amounts = uniswapRouter.swapExactTokensForTokens(
+            amountIn,
+            0,
+            path,
+            address(this),
+            block.timestamp
+        );
+
+        return amounts[1];
+    }
+
+    function swapOnSushiSwap(
+        address tokenOut,
+        uint256 amountIn
+    ) internal returns (uint256) {
+        address;
+        path[0] = weth;
+        path[1] = tokenOut;
+
+        IERC20(weth).approve(address(sushiSwapRouter), amountIn);
+
+        uint256[] memory amounts = sushiSwapRouter.swapExactTokensForTokens(
+            amountIn,
+            0,
+            path,
+            address(this),
+            block.timestamp
+        );
+
+        return amounts[1];
+    }
 }
